@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "target": "ES5",
     "module": "CommonJS",
+    "lib": ["ES2015", "DOM"],
     "strict": true
   },
   "include": ["src/**/*"]

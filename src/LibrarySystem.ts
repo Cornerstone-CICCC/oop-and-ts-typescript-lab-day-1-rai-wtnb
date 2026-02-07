@@ -9,38 +9,83 @@
 
 enum BookGenre {
   Fantasy,
-  // add 4 more
+  Fiction,
+  NonFiction,
+  SciFi,
+  Biography,
 }
 
-type Book = {
-
+interface Book {
+  readonly bookId: number;
+  title: string;
+  author: string;
+  genre: BookGenre;
+  isAvailable: boolean;
 }
 
 let library: Book[] = [];
 
-function addBook(bookId, title, author, genre) {
-
+function addBook(
+  bookId: number,
+  title: string,
+  author: string,
+  genre: BookGenre,
+): Book {
+  const book: Book = {
+    bookId,
+    title,
+    author,
+    genre,
+    isAvailable: true,
+  };
+  library.push(book);
+  return book;
 }
 
-function borrowBook(bookId) {
+function borrowBook(bookId: number): string {
+  const book = library.find((b) => b.bookId === bookId);
+  if (!book) throw new Error("Book not found");
 
+  if (book.isAvailable) {
+    book.isAvailable = false;
+    return `${book.title} has been borrowed`;
+  } else {
+    throw new Error(`${book.title} is not available`);
+  }
 }
 
-function returnBook(bookId) {
+function returnBook(bookId: number): string {
+  const book = library.find((b) => b.bookId === bookId);
+  if (!book) throw new Error("Book not found");
 
+  book.isAvailable = true;
+  return `${book.title} has been returned`;
 }
 
-function checkAvailability(bookId) {
+function checkAvailability(bookId: number): boolean {
+  const book = library.find((b) => b.bookId === bookId);
+  if (!book) throw new Error("Book not found");
 
+  return book.isAvailable;
 }
 
-function removeBook(bookId) {
-
+function removeBook(bookId: number): string {
+  const index = library.findIndex((b) => b.bookId === bookId);
+  if (index !== -1) {
+    const title = library[index].title;
+    library.splice(index, 1);
+    return `${title} has been removed from the library`;
+  }
+  throw new Error("Book not found");
 }
 
 // Test cases (Create more if needed)
-console.log(addBook(1, "The Hobbit", "J.R.R. Tolkien", BookGenre.Fantasy)) // { bookId: 1, title: "The Hobbit", author: "J.R.R. Tolkien", genre: BookGenre.Fantasy, isAvailable: true }
-console.log(borrowBook(1)) // "The Hobbit has been borrowed"
-console.log(checkAvailability(1)) // false
-console.log(returnBook(1)) // "The Hobbit has been returned"
-console.log(removeBook(1)) // "The Hobbit has been removed from the library"
+try {
+  console.log(addBook(1, "The Hobbit", "J.R.R. Tolkien", BookGenre.Fantasy)); // { bookId: 1, title: "The Hobbit", author: "J.R.R. Tolkien", genre: BookGenre.Fantasy, isAvailable: true }
+  console.log(borrowBook(1)); // "The Hobbit has been borrowed"
+  console.log(checkAvailability(1)); // false
+  console.log(returnBook(1)); // "The Hobbit has been returned"
+  console.log(removeBook(1)); // "The Hobbit has been removed from the library"
+} catch (e) {
+  console.log((e as Error).message);
+}
